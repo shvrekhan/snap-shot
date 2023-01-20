@@ -8,6 +8,7 @@ class SearchBar extends React.Component {
         super(props);
         this.state = {
             invalidInput: "",
+            titleHeading: "",
             isLoading: false,
             searchValue: "",
             recivedPhotos: [],
@@ -38,18 +39,20 @@ class SearchBar extends React.Component {
     }
     tagHandelChange = (event) => {
         this.setState({
-            searchValue: event.target.innerText
+            searchValue: event.target.innerText,
+            titleHeading: event.target.innerText + " " + "Pictures"
         }, this.searchImages);
         // console.log(event.target.innerText);
     }
 
     searchImages = () => {
-        console.log(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${this.API_KEY}&tags=${this.state.searchValue}&per_page=25&format=json&nojsoncallback=1`)
+        this.loading(true);
+        // console.log(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${this.API_KEY}&tags=${this.state.searchValue}&per_page=25&format=json&nojsoncallback=1`)
         fetch(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${this.API_KEY}&tags=${this.state.searchValue}&per_page=25&format=json&nojsoncallback=1`)
             .then((response) => {
                 if (response.ok) {
                     this.setState({
-                        Error: false
+                        fetchError: false
                     });
                     return response.json();
                 } else {
@@ -60,6 +63,7 @@ class SearchBar extends React.Component {
             .then((data) => {
                 // console.log(data);
                 if (data.photos.photo.length == 0) {
+                    console.log("0 photos")
 
                 } else {
                     let photoArr = data.photos.photo.map((currentPhoto) => {
@@ -68,13 +72,20 @@ class SearchBar extends React.Component {
                     })
                     this.setState({
                         recivedPhotos: photoArr
+
                     })
+                    this.loading(false);
                 }
 
                 // console.log(this.state.recivedPhotos);
             })
             .catch((error) => {
                 console.log(error);
+                this.setState({
+                    fetchError: true,
+                    photoFetchFailed: "Api fetch failed please try with different and valid keyword"
+                })
+                this.loading(false);
             })
     }
 
@@ -87,13 +98,13 @@ class SearchBar extends React.Component {
                 isLoading: false
             })
         } else {
+            this.setState({
+                titleHeading: `${this.state.searchValue} Pictures`
+            })
             this.searchImages();
 
         }
-        // this.setState({
-        //     searchValue: event.target.textContent
-        // })
-        console.log(this.state.searchValue);
+
     }
 
 
@@ -101,38 +112,40 @@ class SearchBar extends React.Component {
     render() {
         return (
             <>
-                <Header />
+                <div className="parent">
+                    <Header />
 
-                <main>
-                    <form onSubmit={this.submit}>
-                        <input
-                            type="text"
-                            placeholder="Enter a valid Keyword"
-                            onChange={this.inputEvent}
-                            value={this.state.searchValue}
-                        ></input>
-                        <button type="submit">
+                    <main>
+                        <form onSubmit={this.submit} className="form-flex">
+                            <input
+                                type="text"
+                                placeholder="Enter a valid Keyword"
+                                onChange={this.inputEvent}
+                                value={this.state.searchValue}
+                            ></input>
+                            <button type="submit" className="search">
+                                search
+                            </button>
+                        </form>
+                    </main>
+                    <TagNames tags={["Mountain", "Beaches", "Birds", "Food"]} tagHandel={this.tagHandelChange} />
+                    {this.state.fetchError ? <p className="error-msg">{this.state.photoFetchFailed}</p> : <h1>{this.state.titleHeading}</h1>}
 
-                        </button>
-                    </form>
-                </main>
-                <TagNames tags={["Mountain", "Beaches", "Birds", "Food"]} tagHandel={this.tagHandelChange} />
 
-                <p>{this.state.invalidInput}</p>
 
-                <h1>{this.state.searchValue}</h1>
-                {console.log(this.state.recivedPhotos.length)};
-                {this.state.isLoading ? <Loader /> : <>
-                    <div className="image-section" >
-                        {this.state.recivedPhotos.map((photo) => {
-                            return (
-                                <img src={photo} key={photo} />
-                            )
+                    {console.log(this.state.recivedPhotos.length)};
+                    {console.log(this.state.isLoading)}
+                    {this.state.isLoading ? <Loader /> :
+                        <div className="image-section" >
+                            {this.state.recivedPhotos.map((photo) => {
+                                return (
+                                    <img src={photo} key={photo} />
+                                )
 
-                        })}
-                    </div>
-                </>}
-
+                            })}
+                        </div>
+                    }
+                </div>
 
 
             </>
