@@ -52,7 +52,8 @@ class SearchBar extends React.Component {
             .then((response) => {
                 if (response.ok) {
                     this.setState({
-                        fetchError: false
+                        fetchError: false,
+                        zeroPhoto: false,
                     });
                     return response.json();
                 } else {
