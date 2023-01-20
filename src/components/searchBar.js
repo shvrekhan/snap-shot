@@ -1,41 +1,69 @@
 import React from "react";
 import Header from "./header";
 import TagNames from "./tags";
+import Loader from "./loader"
 
 class SearchBar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            invalidInput: "",
             isLoading: false,
             searchValue: "",
             recivedPhotos: [],
             photoFetchFailed: "",
-            Error: null,
+            fetchError: null,
 
         };
         this.API_KEY = "3f4b8aebd9d352fa0701390939eb9df6";
+    }
+    errorSet = (value) => {
+        this.setState({
+            fetchError: value,
+        })
+
     }
 
     inputEvent = (event) => {
         this.setState({
             searchValue: event.target.value
         })
-        this.searchImages();
-        // console.log(this.state.searchValue);
+
+    }
+
+    loading = (value) => {
+        this.setState({
+            isLoading: value,
+        });
     }
     searchImages = () => {
+        console.log(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${this.API_KEY}&tags=${this.state.searchValue}&per_page=25&format=json&nojsoncallback=1`)
         fetch(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${this.API_KEY}&tags=${this.state.searchValue}&per_page=25&format=json&nojsoncallback=1`)
             .then((response) => {
-                return response.json();
+                if (response.ok) {
+                    this.setState({
+                        Error: false
+                    });
+                    return response.json();
+                } else {
+                    this.loading(false);
+                    this.fetchError(true);
+                }
             })
             .then((data) => {
-                let photoArr = data.photos.photo.map((currentPhoto) => {
-                    let photoUrl = `https://live.staticflickr.com/${currentPhoto.server}/${currentPhoto.id}_${currentPhoto.secret}_q.jpg`;
-                    return photoUrl;
-                })
-                this.setState({
-                    recivedPhotos: photoArr
-                })
+                // console.log(data);
+                if (data.photos.photo.length == 0) {
+
+                } else {
+                    let photoArr = data.photos.photo.map((currentPhoto) => {
+                        let photoUrl = `https://live.staticflickr.com/${currentPhoto.server}/${currentPhoto.id}_${currentPhoto.secret}_q.jpg`;
+                        return photoUrl;
+                    })
+                    this.setState({
+                        recivedPhotos: photoArr
+                    })
+                }
+
                 // console.log(this.state.recivedPhotos);
             })
             .catch((error) => {
@@ -45,11 +73,20 @@ class SearchBar extends React.Component {
 
     submit = (event) => {
         event.preventDefault();
-        this.setState({
-            searchValue: event.target.textContent
-        })
+        if (this.state.searchValue.trim() === 0) {
+            this.setState({
+                invalidInput: "Enter in search box",
+                recivedPhotos: [],
+                isLoading: false
+            })
+        } else {
+            this.searchImages();
+
+        }
+        // this.setState({
+        //     searchValue: event.target.textContent
+        // })
         console.log(this.state.searchValue);
-        this.searchImages();
     }
 
 
@@ -58,26 +95,36 @@ class SearchBar extends React.Component {
         return (
             <>
                 <Header />
-                <form onSubmit={this.submit}>
-                    <input
-                        onChange={this.inputEvent}
-                        value={this.state.searchValue}
-                    ></input>
-                    <button type="submit">button</button>
-                </form>
+
+                <main>
+                    <form onSubmit={this.submit}>
+                        <input
+                            type="text"
+                            placeholder="Enter a valid Keyword"
+                            onChange={this.inputEvent}
+                            value={this.state.searchValue}
+                        ></input>
+                        <button type="submit">
+
+                        </button>
+                    </form>
+                </main>
 
                 <p>Error msg comes here</p>
 
                 <h1>Searched image title comes here</h1>
                 {console.log(this.state.recivedPhotos.length)};
-                <div className="image-section" >
-                    {this.state.recivedPhotos.map((photo) => {
-                        return (
-                            <img src="https://live.staticflickr.com/65535/51828731574_e0debf0a22_q.jpg" />
-                        )
+                {this.state.isLoading ? <Loader /> : <>
+                    <div className="image-section" >
+                        {this.state.recivedPhotos.map((photo) => {
+                            return (
+                                <img src={photo} key={photo} />
+                            )
 
-                    })}
-                </div>
+                        })}
+                    </div>
+                </>}
+
 
 
             </>
