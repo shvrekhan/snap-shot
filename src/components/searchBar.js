@@ -65,7 +65,9 @@ class SearchBar extends React.Component {
                 if (data.photos.photo.length === 0) {
                     this.setState({
                         zeroPhoto: true,
-                        titleHeading: "No photo recived try with a valid key word."
+                        recivedPhotos: [],
+                        isLoading: false,
+                        titleHeading: "No photo received try with a valid key word."
                     })
                     this.loading(false);
 
@@ -94,7 +96,7 @@ class SearchBar extends React.Component {
 
     submit = (event) => {
         event.preventDefault();
-        if (this.state.searchValue.trim() === 0) {
+        if (this.state.searchValue.trim().length === 0) {
             this.setState({
                 invalidInput: "Enter in search box",
                 recivedPhotos: [],
@@ -131,17 +133,30 @@ class SearchBar extends React.Component {
                             </button>
                         </form>
                     </main>
-                    <TagNames tags={["Mountain", "Cars", "Birds", "Food"]} tagHandel={this.tagHandelChange} />
-                    {this.state.fetchError ? <p className="error-msg">{this.state.photoFetchFailed}</p> : <p className="error-msg">{this.state.titleHeading}</p>}
-                    {this.state.isLoading ? <Loader /> : null}
-                    {this.state.zeroPhoto ? null : (<div className="image-section" >
-                        {this.state.recivedPhotos.map((photo) => {
-                            return (
-                                <img src={photo} key={photo} alt="img" />
-                            )
 
-                        })}
-                    </div>)}
+                    <TagNames tags={
+                        ["Mountain",
+                            "Cars",
+                            "Birds",
+                            "Food"]}
+                        tagHandel={this.tagHandelChange} />
+
+                    {this.state.fetchError ?
+                        <p className="error-msg">{this.state.photoFetchFailed}</p> :
+                        <p className="error-msg">{this.state.titleHeading}</p>
+                    }
+
+                    {(this.state.isLoading && !this.state.zeroPhoto) ?
+                        <Loader /> : <div className="image-section" >
+                            {this.state.recivedPhotos.map((photo) => {
+                                return (
+                                    <img src={photo} key={photo} alt="img" />
+                                )
+
+                            })}
+                        </div>}
+
+
                 </div>
             </>
         )
