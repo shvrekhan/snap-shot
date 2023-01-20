@@ -14,6 +14,8 @@ class SearchBar extends React.Component {
             recivedPhotos: [],
             photoFetchFailed: "",
             fetchError: null,
+            zeroPhoto: false,
+            zeroPhotoErrorMsg: "",
 
         };
         this.API_KEY = "3f4b8aebd9d352fa0701390939eb9df6";
@@ -42,12 +44,10 @@ class SearchBar extends React.Component {
             searchValue: event.target.innerText,
             titleHeading: event.target.innerText + " " + "Pictures"
         }, this.searchImages);
-        // console.log(event.target.innerText);
     }
 
     searchImages = () => {
         this.loading(true);
-        // console.log(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${this.API_KEY}&tags=${this.state.searchValue}&per_page=25&format=json&nojsoncallback=1`)
         fetch(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${this.API_KEY}&tags=${this.state.searchValue}&per_page=25&format=json&nojsoncallback=1`)
             .then((response) => {
                 if (response.ok) {
@@ -61,9 +61,12 @@ class SearchBar extends React.Component {
                 }
             })
             .then((data) => {
-                // console.log(data);
                 if (data.photos.photo.length == 0) {
-                    console.log("0 photos")
+                    this.setState({
+                        zeroPhoto: true,
+                        titleHeading: "No photo recived try with a valid key word."
+                    })
+                    this.loading(false);
 
                 } else {
                     let photoArr = data.photos.photo.map((currentPhoto) => {
@@ -77,7 +80,6 @@ class SearchBar extends React.Component {
                     this.loading(false);
                 }
 
-                // console.log(this.state.recivedPhotos);
             })
             .catch((error) => {
                 console.log(error);
@@ -95,7 +97,8 @@ class SearchBar extends React.Component {
             this.setState({
                 invalidInput: "Enter in search box",
                 recivedPhotos: [],
-                isLoading: false
+                isLoading: false,
+                recivedPhotos: []
             })
         } else {
             this.setState({
@@ -114,7 +117,6 @@ class SearchBar extends React.Component {
             <>
                 <div className="parent">
                     <Header />
-
                     <main>
                         <form onSubmit={this.submit} className="form-flex">
                             <input
@@ -130,11 +132,6 @@ class SearchBar extends React.Component {
                     </main>
                     <TagNames tags={["Mountain", "Beaches", "Birds", "Food"]} tagHandel={this.tagHandelChange} />
                     {this.state.fetchError ? <p className="error-msg">{this.state.photoFetchFailed}</p> : <h1>{this.state.titleHeading}</h1>}
-
-
-
-                    {console.log(this.state.recivedPhotos.length)};
-                    {console.log(this.state.isLoading)}
                     {this.state.isLoading ? <Loader /> :
                         <div className="image-section" >
                             {this.state.recivedPhotos.map((photo) => {
@@ -142,15 +139,13 @@ class SearchBar extends React.Component {
                                     <img src={photo} key={photo} />
                                 )
 
-                            })}
+                            })};
                         </div>
-                    }
+                    };
                 </div>
-
-
             </>
         )
-    }
-}
+    };
+};
 
 export default SearchBar;
