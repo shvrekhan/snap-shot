@@ -42,7 +42,7 @@ class SearchBar extends React.Component {
     tagHandelChange = (event) => {
         this.setState({
             searchValue: event.target.innerText,
-            titleHeading: event.target.innerText + " " + "Pictures"
+            titleHeading: `${event.target.innerText} Pictures`
         }, this.searchImages);
     }
 
@@ -61,7 +61,7 @@ class SearchBar extends React.Component {
                 }
             })
             .then((data) => {
-                if (data.photos.photo.length == 0) {
+                if (data.photos.photo.length === 0) {
                     this.setState({
                         zeroPhoto: true,
                         titleHeading: "No photo recived try with a valid key word."
@@ -98,7 +98,6 @@ class SearchBar extends React.Component {
                 invalidInput: "Enter in search box",
                 recivedPhotos: [],
                 isLoading: false,
-                recivedPhotos: []
             })
         } else {
             this.setState({
@@ -130,18 +129,17 @@ class SearchBar extends React.Component {
                             </button>
                         </form>
                     </main>
-                    <TagNames tags={["Mountain", "Beaches", "Birds", "Food"]} tagHandel={this.tagHandelChange} />
+                    <TagNames tags={["Mountain", "Beach", "Birds", "Food"]} tagHandel={this.tagHandelChange} />
                     {this.state.fetchError ? <p className="error-msg">{this.state.photoFetchFailed}</p> : <h1>{this.state.titleHeading}</h1>}
-                    {this.state.isLoading ? <Loader /> :
-                        <div className="image-section" >
-                            {this.state.recivedPhotos.map((photo) => {
-                                return (
-                                    <img src={photo} key={photo} />
-                                )
+                    {this.state.isLoading ? <Loader /> : null};
+                    {this.state.zeroPhoto ? null : <div className="image-section" >
+                        {this.state.recivedPhotos.map((photo) => {
+                            return (
+                                <img src={photo} key={photo} alt="img" />
+                            )
 
-                            })};
-                        </div>
-                    };
+                        })};
+                    </div>}
                 </div>
             </>
         )
