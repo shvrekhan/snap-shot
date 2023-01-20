@@ -7,3 +7,5 @@ class Loader extends React.Component {
         )
     };
 };
+
+export default Loader;
