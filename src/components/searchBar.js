@@ -36,6 +36,13 @@ class SearchBar extends React.Component {
             isLoading: value,
         });
     }
+    tagHandelChange = (event) => {
+        this.setState({
+            searchValue: event.target.innerText
+        }, this.searchImages);
+        // console.log(event.target.innerText);
+    }
+
     searchImages = () => {
         console.log(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${this.API_KEY}&tags=${this.state.searchValue}&per_page=25&format=json&nojsoncallback=1`)
         fetch(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${this.API_KEY}&tags=${this.state.searchValue}&per_page=25&format=json&nojsoncallback=1`)
@@ -109,10 +116,11 @@ class SearchBar extends React.Component {
                         </button>
                     </form>
                 </main>
+                <TagNames tags={["Mountain", "Beaches", "Birds", "Food"]} tagHandel={this.tagHandelChange} />
 
-                <p>Error msg comes here</p>
+                <p>{this.state.invalidInput}</p>
 
-                <h1>Searched image title comes here</h1>
+                <h1>{this.state.searchValue}</h1>
                 {console.log(this.state.recivedPhotos.length)};
                 {this.state.isLoading ? <Loader /> : <>
                     <div className="image-section" >
