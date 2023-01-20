@@ -4,14 +4,12 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  /* border: 1px solid red; */
 }
 
 body {
   font-size: 62.5%;
   font-family: "Lobster", cursive;
-}
-.heading {
-  font-size: 3rem;
 }
 
 .parent {
@@ -21,10 +19,13 @@ body {
   margin-top: 4rem;
   gap: 1rem;
 }
+
+.heading {
+  font-size: 3rem;
+}
+
 input {
   background-color: #edeff0;
-  width: 25vw;
-  height: 5vh;
   border-radius: 0.5rem;
   padding-left: 0.9rem;
 }
@@ -34,25 +35,27 @@ button {
   width: 5rem;
   border-radius: 0.5rem;
   height: 5vh;
+  font-weight: bold;
 }
 .tag {
   /* border: 1px solid red; */
+  flex-basis: 60%;
   display: flex;
-  width: 30vw;
   justify-content: space-evenly;
 }
 
-.button-search {
-  background-color: black;
-  width: 5rem;
-  height: 3rem;
+.search {
+  margin-left: 0.1rem;
 }
 
 .tag-list {
   display: flex;
   margin: 0.5rem;
 }
-
+.form-flex {
+  display: flex;
+  justify-content: space-evenly;
+}
 .loader {
   border: 16px solid #f3f3f3;
   border-radius: 50%;
@@ -81,7 +84,34 @@ img {
   width: 15vw;
   padding-bottom: 0.8rem;
 }
+img:hover {
+  transform: scale(1.09);
+}
 
 .error-msg {
   font-size: 1.5rem;
+}
+
+button:hover {
+  background-color: white;
+  color: #051c33;
+}
+
+@media screen and (max-device-width: 768px) {
+  .tag {
+    /* border: 1px solid red; */
+    flex-direction: column;
+    flex-basis: 100%;
+  }
+  .image-section {
+    width: 80vw;
+  }
+  img {
+    width: 30vw;
+    padding-bottom: 0.8rem;
+  }
+  .error-msg {
+    font-size: 1rem;
+    font-weight: bold;
+  }
 }
