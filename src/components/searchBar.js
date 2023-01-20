@@ -119,6 +119,7 @@ class SearchBar extends React.Component {
                     <main>
                         <form onSubmit={this.submit} className="form-flex">
                             <input
+                                className="input-field"
                                 type="text"
                                 placeholder="Enter a valid Keyword"
                                 onChange={this.inputEvent}
@@ -129,17 +130,17 @@ class SearchBar extends React.Component {
                             </button>
                         </form>
                     </main>
-                    <TagNames tags={["Mountain", "Beach", "Birds", "Food"]} tagHandel={this.tagHandelChange} />
-                    {this.state.fetchError ? <p className="error-msg">{this.state.photoFetchFailed}</p> : <h1>{this.state.titleHeading}</h1>}
-                    {this.state.isLoading ? <Loader /> : null};
-                    {this.state.zeroPhoto ? null : <div className="image-section" >
+                    <TagNames tags={["Mountain", "Cars", "Birds", "Food"]} tagHandel={this.tagHandelChange} />
+                    {this.state.fetchError ? <p className="error-msg">{this.state.photoFetchFailed}</p> : <p className="error-msg">{this.state.titleHeading}</p>}
+                    {this.state.isLoading ? <Loader /> : null}
+                    {this.state.zeroPhoto ? null : (<div className="image-section" >
                         {this.state.recivedPhotos.map((photo) => {
                             return (
                                 <img src={photo} key={photo} alt="img" />
                             )
 
-                        })};
-                    </div>}
+                        })}
+                    </div>)}
                 </div>
             </>
         )
